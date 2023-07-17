@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 
 public class PriceAggregator {
 
+    private final ExecutorService executor = new ForkJoinPool(50);
     private PriceRetriever priceRetriever = new PriceRetriever();
 
     public void setPriceRetriever(PriceRetriever priceRetriever) {
@@ -20,8 +21,6 @@ public class PriceAggregator {
     }
 
     public double getMinPrice(long itemId) {
-        final ExecutorService executor = new ForkJoinPool(50);
-
         final ArrayList<CompletableFuture<Double>> tasks = new ArrayList<>();
         shopIds.forEach((Long shopId) -> tasks.add(
             CompletableFuture.supplyAsync(() -> priceRetriever.getPrice(itemId, shopId), executor)
